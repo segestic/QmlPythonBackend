@@ -21,6 +21,7 @@ from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtQml import QQmlApplicationEngine
 from backend import Backend
 from my_ip import IPBackend
+from my_rfid import RfidBackend
 
 
 if __name__ == "__main__":
@@ -29,6 +30,7 @@ if __name__ == "__main__":
     # Create an instance of the backend
     backend = Backend()
     ipbackend = IPBackend()
+    rfidbackend = RfidBackend()
 
     # Create the QML engine
     engine = QQmlApplicationEngine()
@@ -36,6 +38,7 @@ if __name__ == "__main__":
     # Expose the backend instance to the QML frontend
     engine.rootContext().setContextProperty("backend", backend)
     engine.rootContext().setContextProperty("ipbackend", ipbackend)
+    engine.rootContext().setContextProperty("rfidbackend", rfidbackend)
 
     # Load the QML file
     engine.load("main.qml")

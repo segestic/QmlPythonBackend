@@ -113,7 +113,7 @@ class RfidBackend(QObject):
             (status,uid) = self.MIFAREReader.MFRC522_Anticoll()
 
             # If we have the UID, continue
-            if status == self.MIFAREReader.MI_OK and self.proceed_read:
+            if status == self.MIFAREReader.MI_OK:
                 # Print UID
                 id = uid_to_num(uid)
                 self._rfid = str(id)

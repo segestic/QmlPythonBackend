@@ -23,7 +23,9 @@ class RfidBackend(QObject):
     def __init__(self):
         super().__init__()
         self._rfid = ""
+        self.MIFAREReader = MFRC522.MFRC522()
         self.continue_reading = True
+        self.proceed_read = False
 
 
     @pyqtProperty(str, notify=rfidAddressChanged)
@@ -44,7 +46,6 @@ class RfidBackend(QObject):
 
     # Create an object of the class MFRC522
     #MIFAREReader = MFRC522.MFRC522()
-    MIFAREReader = MFRC522()
 
     # Welcome message
     print ("Welcome to the MFRC522 data read example")
@@ -91,21 +92,21 @@ class RfidBackend(QObject):
     def read_rfid2(self):
         while self.continue_reading:
             # Scan for cards
-            (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)
+            (status,TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
 
             # If a card is found
-            if status == MIFAREReader.MI_OK:
+            if status == self.MIFAREReader.MI_OK:
                 print ("Card detected")
 
             # Get the UID of the card
-            (status,uid) = MIFAREReader.MFRC522_Anticoll()
+            (status,uid) = self.MIFAREReader.MFRC522_Anticoll()
 
             # If we have the UID, continue
-            if status == MIFAREReader.MI_OK:
+            if status == self.MIFAREReader.MI_OK and self.proceed_read:
                 # Print UID
                 id = uid_to_num(uid)
-                self._rfid = id
-                self.rfidAddressChanged.emit(self._rfid)
+                self._rfid = str(id)
+                self.rfidAddressChanged.emit(str(self._rfid))
 
                 print('UID is ', uid_to_num(uid))
 
@@ -114,10 +115,20 @@ class RfidBackend(QObject):
                 ###ends
 
                 # Check if authenticated #defined as MI_OK = 0
-                if status == MIFAREReader.MI_OK:
+                if status == self.MIFAREReader.MI_OK:
                     #MIFAREReader.MFRC522_StopCrypto1()
-                    MIFAREReader.AntennaOff()
+                    self.MIFAREReader.AntennaOff()
                 else:
                     print ("Authentication error")
-				    
+
+
+
+    @pyqtSlot()
+    def cancel_read_session(self):
+        self.MIFAREReader.MFRC522_StopCrypto1()
+        #GPIO.cleanup()
+        self.MIFAREReader.AntennaOff()
+        print('cancel cancel')
+
+
 

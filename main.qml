@@ -33,7 +33,7 @@ ApplicationWindow {
         target: rfidbackend
         onRfidAddressChanged: {
             myRfidQml = rfidbackend.my_rfid_address
-            console.log("Result from rfid connection function:", myRfid)
+            console.log("Result from rfid connection function:", myRfidQml)
         }
     }
 
@@ -55,10 +55,7 @@ ApplicationWindow {
         text: "Call Backend RFID Start"
         anchors.top: text3.bottom
         anchors.topMargin: 10
-        onClicked: {
-            var result = rfidbackend.read_rfid()
-            console.log("Result from backend function:", result)
-        }
+        onClicked: { rfidbackend.read_rfid() }
     }
 
     Button {
@@ -67,8 +64,7 @@ ApplicationWindow {
         anchors.top: text4.bottom
         anchors.topMargin: 10
         onClicked: {
-            var result = backend.backendFunction()
-            console.log("Result from backend function:", result)
+           { rfidbackend.cancel_read_session() }
         }
     }
 

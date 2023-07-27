@@ -47,6 +47,9 @@ class MFRC522:
     def __init__(self):
         self.mem = [0] * 1024
     
+    def MFRC522():
+        pass
+
     def MFRC522_Reset(self):
         pass
     

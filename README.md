@@ -26,4 +26,4 @@ To install Pyqt5 with qtquick - sudo apt-get install python3-pyqt5 python3-pyqt5
 
 ## Credits
 
-This project was created by [Olusegun O]. If you have any questions or suggestions, please feel free to contact me at olusegunodewole1gmail.com.
+This project was created by [Olusegun O]. If you have any questions or suggestions, please feel free to contact me at olusegunodewole1@gmail.com.

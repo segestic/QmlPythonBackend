@@ -13,7 +13,7 @@ else:
     GPIO = MockGPIO()
     from fake_gpio import MFRC522
 ################################################################################################
-
+import threading
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtProperty, pyqtSlot
 import time
 
@@ -24,8 +24,22 @@ class RfidBackend(QObject):
         super().__init__()
         self._rfid = ""
         self.MIFAREReader = MFRC522.MFRC522()
-        self.continue_reading = True
-        self.proceed_read = False
+        self.running = True # for threading
+        self.rfid_thread = None  # Initialize the thread variable
+        self.continue_reading = True #for rfid
+        self.proceed_read = False #for rfid
+
+    @pyqtSlot()
+    def start_reading(self):
+        self.running = True
+        self.rfid_thread = threading.Thread(target=self.read_rfid)  # Create the thread
+        self.rfid_thread.start()
+
+    @pyqtSlot()
+    def stop_reading(self):
+        self.cancel_read_session()
+        self.running = False
+
 
 
     @pyqtProperty(str, notify=rfidAddressChanged)
@@ -52,7 +66,6 @@ class RfidBackend(QObject):
     #print ("Press Ctrl-C to stop.")
 
 
-    @pyqtSlot()
     def read_id7(self):
         id = None
         while not id:
@@ -77,18 +90,16 @@ class RfidBackend(QObject):
 
 
     #testing on non aarch64 platform...
-    @pyqtSlot()
     def read_rfid(self):
         demo_result = '101022'
         while True:
             print ("infinite loop starts........")
-            time.sleep(3)
+            time.sleep(5)
             self._rfid = demo_result
             break
         self.rfidAddressChanged.emit(self._rfid)
 
 
-    @pyqtSlot()
     def read_rfid2(self):
         while self.continue_reading:
             # Scan for cards
@@ -123,7 +134,6 @@ class RfidBackend(QObject):
 
 
 
-    @pyqtSlot()
     def cancel_read_session(self):
         self.MIFAREReader.MFRC522_StopCrypto1()
         #GPIO.cleanup()

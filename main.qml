@@ -55,7 +55,7 @@ ApplicationWindow {
         text: "Call Backend RFID Start"
         anchors.top: text3.bottom
         anchors.topMargin: 10
-        onClicked: { rfidbackend.read_rfid() }
+        onClicked: { rfidbackend.start_reading() }
     }
 
     Button {
@@ -64,7 +64,7 @@ ApplicationWindow {
         anchors.top: text4.bottom
         anchors.topMargin: 10
         onClicked: {
-           { rfidbackend.cancel_read_session() }
+           { rfidbackend.stop_reading() }
         }
     }
 

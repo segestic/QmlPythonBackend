@@ -9,9 +9,8 @@ This is a demo project showcasing the use of QML with a Python backend. In this 
 To get started with the project, you'll need to perform the following steps:
 
     Clone the repository to your local machine.
-    Install the necessary dependencies by running the command: pip install -r requirements.txt
     Start the backend server by running the command: python main.py
-    Open the frontend/main.qml file in Qt Creator and run the QML application.
+    Open the main.qml file in Qt Creator and run the QML application.
 
 
 ## Requirements

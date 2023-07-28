@@ -107,6 +107,7 @@ class RfidBackend(QObject):
 
     #only two functions will be used - pause_read_session and resume_read_session which act as a wrapper for below function read_rfid
     def read_rfid(self):
+        print ('starting read function')
         while True:
             # Scan for cards
             (status,TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
@@ -151,7 +152,8 @@ class RfidBackend(QObject):
             self.MIFAREReader.AntennaOn()
         else:
             print ('switchin on antenna and creating a read session')
-            self.MIFAREReader.AntennaOn() and self.read_rfid()
+            self.MIFAREReader.AntennaOn()
+            self.read_rfid()
 
 
 

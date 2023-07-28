@@ -8,10 +8,8 @@ if platform.machine() == 'aarch64':
     import signal
 else:
     print("This script is designed to run on a Raspberry Pi with RPi.GPIO module and mfrc522SS module installed.")
-    import fake_gpio
-    from fake_gpio import MockGPIO
+    from .fake_gpio import MockGPIO, MFRC522
     GPIO = MockGPIO()
-    from fake_gpio import MFRC522
 ################################################################################################
 import threading
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtProperty, pyqtSlot
@@ -41,6 +39,10 @@ class RfidBackend(QObject):
         self.running = False
 
 
+    def start_antenna(self):
+        self.running = True
+        self.rfid_thread = threading.Thread(target=self.resume_read_session)  # Create the thread
+        self.rfid_thread.start()
 
     @pyqtProperty(str, notify=rfidAddressChanged)
     def my_rfid_address(self):
@@ -141,4 +143,7 @@ class RfidBackend(QObject):
         print('cancel cancel')
 
 
-
+    def resume_read_session(self):
+        #self.MIFAREReader.MFRC522_StopCrypto1()
+        self.MIFAREReader.AntennaOn()
+        print('switching on antenna')

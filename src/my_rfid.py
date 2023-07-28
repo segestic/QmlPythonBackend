@@ -62,7 +62,7 @@ class RfidBackend(QObject):
         temp = self.MIFAREReader.Read_MFRC522(0x14) #TxControlReg = 0x14
         print ('Antenna status is ', temp)
         notSwitchedOn = (~(temp & 0x03)) #if not same state ( i.e ~NOT 0x03 and 0x03)
-        if notSwitchedOn:
+        if notSwitchedOn == -1: #on is -4, off is -1
             print ("Antenna is off and state is ", notSwitchedOn)
             return 0
         else:
@@ -156,11 +156,6 @@ class RfidBackend(QObject):
 
 
     def resume_read_session(self):
-        temp = self.MIFAREReader.Read_MFRC522(0x14)
-        state = (~(temp & 0x03))
-        print ('Antenna status is ', temp)
-        print ('Antenna state is ', state)
-
         if self.antennaStatus == 1:
             print ('Antenna is already on')
         else:

@@ -58,7 +58,7 @@ class RfidBackend(QObject):
         GPIO.cleanup()
 
 
-    def AntennaStatus(self):
+    def antennaStatus(self):
         temp = self.MIFAREReader.Read_MFRC522(self.TxControlReg)
         if temp & 0x03:
             print ("Antenna is on")
@@ -154,7 +154,7 @@ class RfidBackend(QObject):
 
 
     def resume_read_session(self):
-        if self.AntennaStatus == 1:
+        if self.antennaStatus == 1:
             print ('Antenna is already on')
         else:
             print('switching on antenna')

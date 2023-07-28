@@ -92,7 +92,7 @@ class RfidBackend(QObject):
 
 
     #testing on non aarch64 platform...
-    def read_rfid(self):
+    def read_rfid2(self):
         demo_result = '101022'
         while True:
             print ("infinite loop starts........")
@@ -102,7 +102,7 @@ class RfidBackend(QObject):
         self.rfidAddressChanged.emit(self._rfid)
 
 
-    def read_rfid2(self):
+    def read_rfid(self):
         while self.continue_reading:
             # Scan for cards
             (status,TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
@@ -117,11 +117,11 @@ class RfidBackend(QObject):
             # If we have the UID, continue
             if status == self.MIFAREReader.MI_OK:
                 # Print UID
-                id = uid_to_num(uid)
+                id = self.uid_to_num(uid)
                 self._rfid = str(id)
                 self.rfidAddressChanged.emit(str(self._rfid))
 
-                print('UID is ', uid_to_num(uid))
+                print('UID is ', id)
 
                 print ('ID before conversion is ', id)
 

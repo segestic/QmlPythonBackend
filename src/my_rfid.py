@@ -105,38 +105,45 @@ class RfidBackend(QObject):
             break
         self.rfidAddressChanged.emit(self._rfid)
 
+
+    def read_id(self):
+      id = self.read_rfid()
+      while not id:
+        id = self.read_rfid()
+      return id
+
     #only two functions will be used - pause_read_session and resume_read_session which act as a wrapper for below function read_rfid
     def read_rfid(self):
         print ('starting read function')
-        while True:
-            # Scan for cards
-            (status,TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
+        # Scan for cards
+        (status,TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
 
-            # If a card is found
+        # If a card is found
+        if status == self.MIFAREReader.MI_OK:
+            print ("Card detected")
+
+        # Get the UID of the card
+        (status,uid) = self.MIFAREReader.MFRC522_Anticoll()
+
+        # If we have the UID, continue
+        if status == self.MIFAREReader.MI_OK:
+            # Print UID
+            id = self.uid_to_num(uid)
+            self.id = id
+            self._rfid = str(id)
+            self.rfidAddressChanged.emit(str(self._rfid))
+
+            print('UID is ', id)
+
+            print ('ID before conversion is ', id)
+            ###ends
+            # Check if authenticated #defined as MI_OK = 0
             if status == self.MIFAREReader.MI_OK:
-                print ("Card detected")
-
-            # Get the UID of the card
-            (status,uid) = self.MIFAREReader.MFRC522_Anticoll()
-
-            # If we have the UID, continue
-            if status == self.MIFAREReader.MI_OK:
-                # Print UID
-                id = self.uid_to_num(uid)
-                self._rfid = str(id)
-                self.rfidAddressChanged.emit(str(self._rfid))
-
-                print('UID is ', id)
-
-                print ('ID before conversion is ', id)
-                ###ends
-                # Check if authenticated #defined as MI_OK = 0
-                if status == self.MIFAREReader.MI_OK:
-                    print ("card detected")
-                    #stop reading
-                    self.pause_read = False #card has been scanned so current reading is not paused
-                else:
-                    print ("Authentication error")
+                print ("card detected")
+                #stop reading
+                self.pause_read = False #card has been scanned so current reading is not paused
+            else:
+                print ("Authentication error")
 
 
     #switches off antenna alone....
@@ -153,7 +160,7 @@ class RfidBackend(QObject):
         else:
             print ('switchin on antenna and creating a read session')
             self.MIFAREReader.AntennaOn()
-            self.read_rfid()
+            self.read_id()
 
 
 

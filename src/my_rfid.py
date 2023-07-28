@@ -38,7 +38,7 @@ class RfidBackend(QObject):
         self.cancel_read_session()
         self.running = False
 
-
+    @pyqtSlot()
     def start_antenna(self):
         self.running = True
         self.rfid_thread = threading.Thread(target=self.resume_read_session)  # Create the thread
@@ -129,8 +129,8 @@ class RfidBackend(QObject):
 
                 # Check if authenticated #defined as MI_OK = 0
                 if status == self.MIFAREReader.MI_OK:
+                    print ("card detected")
                     #MIFAREReader.MFRC522_StopCrypto1()
-                    self.MIFAREReader.AntennaOff()
                 else:
                     print ("Authentication error")
 

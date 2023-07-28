@@ -59,11 +59,11 @@ class RfidBackend(QObject):
 
     #custom function that should be in library, but created it
     def antennaStatus(self):
-        temp = self.MIFAREReader.Read_MFRC522(self.TxControlReg)
+        temp = self.MIFAREReader.Read_MFRC522(0x14) #TxControlReg = 0x14
         print ('Antenna status is ', temp)
-        state = (~(temp & 0x03))
-        if state:
-            print ("Antenna is off and state is ", state)
+        notSwitchedOn = (~(temp & 0x03)) #if not same state ( i.e ~NOT 0x03 and 0x03)
+        if notSwitchedOn:
+            print ("Antenna is off and state is ", notSwitchedOn)
             return 0
         else:
             print ("Antenna is on")
@@ -156,7 +156,7 @@ class RfidBackend(QObject):
 
 
     def resume_read_session(self):
-        temp = self.MIFAREReader.Read_MFRC522(self.TxControlReg)
+        temp = self.MIFAREReader.Read_MFRC522(0x14)
         state = (~(temp & 0x03))
         print ('Antenna status is ', temp)
         print ('Antenna state is ', state)

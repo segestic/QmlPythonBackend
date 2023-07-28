@@ -57,6 +57,16 @@ class RfidBackend(QObject):
         continue_reading = False
         GPIO.cleanup()
 
+
+    def AntennaStatus(self):
+        temp = self.MIFAREReader.Read_MFRC522(self.TxControlReg)
+        if temp & 0x03:
+            print ("Antenna is on")
+            return 1
+        else:
+            print ("Antenna is off")
+            return 0
+
     # Hook the SIGINT
     #signal.signal(signal.SIGINT, end_read)
 
@@ -137,13 +147,16 @@ class RfidBackend(QObject):
 
 
     def cancel_read_session(self):
-        #self.MIFAREReader.MFRC522_StopCrypto1() #stops Anticoll from working
+        #self.MIFAREReader.MFRC522_StopCrypto1() #stops  Anticoll from working
         #GPIO.cleanup()
         self.MIFAREReader.AntennaOff()
         print('cancel cancel')
 
 
     def resume_read_session(self):
-        #self.MIFAREReader.MFRC522_StopCrypto1()
-        self.MIFAREReader.AntennaOn()
-        print('switching on antenna')
+        if self.AntennaStatus == 1:
+            print ('Antenna is already on')
+        else:
+            print('switching on antenna')
+            self.MIFAREReader.AntennaOn()
+

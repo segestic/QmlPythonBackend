@@ -24,20 +24,21 @@ class RfidBackend(QObject):
         self.MIFAREReader = MFRC522.MFRC522()
         self.running = True # for threading
         self.rfid_thread = None  # Initialize the thread variable
-        self.continue_reading = True #for rfid
-        self.proceed_read = False #for rfid
+        self.continue_reading = True #for rfid - not used again
+        self.pause_read = False #for rfid - by default reading is not paused
 
     @pyqtSlot()
     def start_reading(self):
         self.running = True
-        self.rfid_thread = threading.Thread(target=self.read_rfid)  # Create the thread
+        self.rfid_thread = threading.Thread(target=self.resume_read_session)  # Create the thread
         self.rfid_thread.start()
 
     @pyqtSlot()
     def stop_reading(self):
-        self.cancel_read_session()
+        self.pause_read_session()
         self.running = False
 
+    #function not needed... depreceated
     @pyqtSlot()
     def start_antenna(self):
         self.running = True
@@ -57,6 +58,7 @@ class RfidBackend(QObject):
         continue_reading = False
         GPIO.cleanup()
 
+
     #custom function that should be in library, but created it
     def antennaStatus(self):
         temp = self.MIFAREReader.Read_MFRC522(0x14) #TxControlReg = 0x14
@@ -68,16 +70,6 @@ class RfidBackend(QObject):
         else:
             print ("Antenna is on")
             return 1
-
-    # Hook the SIGINT
-    #signal.signal(signal.SIGINT, end_read)
-
-    # Create an object of the class MFRC522
-    #MIFAREReader = MFRC522.MFRC522()
-
-    # Welcome message
-    print ("Welcome to the MFRC522 data read example")
-    #print ("Press Ctrl-C to stop.")
 
 
     def read_id7(self):
@@ -113,52 +105,57 @@ class RfidBackend(QObject):
             break
         self.rfidAddressChanged.emit(self._rfid)
 
-
+    #only two functions will be used - pause_read_session and resume_read_session which act as a wrapper for below function read_rfid
     def read_rfid(self):
-        while self.continue_reading:
-            # Scan for cards
-            (status,TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
+        #antenna on will be used to start rfid and antenna off will be used to pause
+        #while self.continue_reading: - i don't need a while loop again
+        # Scan for cards
+        (status,TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
 
-            # If a card is found
+        # If a card is found
+        if status == self.MIFAREReader.MI_OK:
+            print ("Card detected")
+
+        # Get the UID of the card
+        (status,uid) = self.MIFAREReader.MFRC522_Anticoll()
+
+        # If we have the UID, continue
+        if status == self.MIFAREReader.MI_OK:
+            # Print UID
+            id = self.uid_to_num(uid)
+            self._rfid = str(id)
+            self.rfidAddressChanged.emit(str(self._rfid))
+
+            print('UID is ', id)
+
+            print ('ID before conversion is ', id)
+
+            ###ends
+            # Check if authenticated #defined as MI_OK = 0
             if status == self.MIFAREReader.MI_OK:
-                print ("Card detected")
-
-            # Get the UID of the card
-            (status,uid) = self.MIFAREReader.MFRC522_Anticoll()
-
-            # If we have the UID, continue
-            if status == self.MIFAREReader.MI_OK:
-                # Print UID
-                id = self.uid_to_num(uid)
-                self._rfid = str(id)
-                self.rfidAddressChanged.emit(str(self._rfid))
-
-                print('UID is ', id)
-
-                print ('ID before conversion is ', id)
-
-                ###ends
-
-                # Check if authenticated #defined as MI_OK = 0
-                if status == self.MIFAREReader.MI_OK:
-                    print ("card detected")
-                    #MIFAREReader.MFRC522_StopCrypto1()
-                else:
-                    print ("Authentication error")
+                print ("card detected")
+                #stop reading
+                self.pause_read = False #card has been scanned so current reading is not paused
+            else:
+                print ("Authentication error")
 
 
-
-    def cancel_read_session(self):
-        #self.MIFAREReader.MFRC522_StopCrypto1() #stops  Anticoll from working
-        #GPIO.cleanup()
+    #switches off antenna alone....
+    def pause_read_session(self):
+        self.pause_read = True
         self.MIFAREReader.AntennaOff()
         print('cancel cancel')
 
 
     def resume_read_session(self):
-        if self.antennaStatus == 1:
-            print ('Antenna is already on')
-        else:
-            print('switching on antenna')
+        if self.pause_read == True:
+            print('Switching on antenna alone. A read session is on')
             self.MIFAREReader.AntennaOn()
+        else:
+            print ('switchin on antenna and creating a read session')
+            self.MIFAREReader.AntennaOn() and self.read_rfid()
 
+
+
+#if self.antennaStatus() == 1:
+#print ('Antenna is already on')

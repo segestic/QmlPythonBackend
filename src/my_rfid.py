@@ -129,7 +129,6 @@ class RfidBackend(QObject):
             print('UID is ', id)
 
             print ('ID before conversion is ', id)
-
             ###ends
             # Check if authenticated #defined as MI_OK = 0
             if status == self.MIFAREReader.MI_OK:

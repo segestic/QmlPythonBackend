@@ -107,36 +107,35 @@ class RfidBackend(QObject):
 
     #only two functions will be used - pause_read_session and resume_read_session which act as a wrapper for below function read_rfid
     def read_rfid(self):
-        #antenna on will be used to start rfid and antenna off will be used to pause
-        #while self.continue_reading: - i don't need a while loop again
-        # Scan for cards
-        (status,TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
+        while True:
+            # Scan for cards
+            (status,TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
 
-        # If a card is found
-        if status == self.MIFAREReader.MI_OK:
-            print ("Card detected")
-
-        # Get the UID of the card
-        (status,uid) = self.MIFAREReader.MFRC522_Anticoll()
-
-        # If we have the UID, continue
-        if status == self.MIFAREReader.MI_OK:
-            # Print UID
-            id = self.uid_to_num(uid)
-            self._rfid = str(id)
-            self.rfidAddressChanged.emit(str(self._rfid))
-
-            print('UID is ', id)
-
-            print ('ID before conversion is ', id)
-            ###ends
-            # Check if authenticated #defined as MI_OK = 0
+            # If a card is found
             if status == self.MIFAREReader.MI_OK:
-                print ("card detected")
-                #stop reading
-                self.pause_read = False #card has been scanned so current reading is not paused
-            else:
-                print ("Authentication error")
+                print ("Card detected")
+
+            # Get the UID of the card
+            (status,uid) = self.MIFAREReader.MFRC522_Anticoll()
+
+            # If we have the UID, continue
+            if status == self.MIFAREReader.MI_OK:
+                # Print UID
+                id = self.uid_to_num(uid)
+                self._rfid = str(id)
+                self.rfidAddressChanged.emit(str(self._rfid))
+
+                print('UID is ', id)
+
+                print ('ID before conversion is ', id)
+                ###ends
+                # Check if authenticated #defined as MI_OK = 0
+                if status == self.MIFAREReader.MI_OK:
+                    print ("card detected")
+                    #stop reading
+                    self.pause_read = False #card has been scanned so current reading is not paused
+                else:
+                    print ("Authentication error")
 
 
     #switches off antenna alone....

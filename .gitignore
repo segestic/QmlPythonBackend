@@ -130,7 +130,8 @@ venv.bak/
 
 
 #pyqt-seg
-pythonbackend.pyproject.u*
+pythonbackend.pyproject.user/
+pythonbackend.pyproject.user*/
 
 
 # Spyder project settings

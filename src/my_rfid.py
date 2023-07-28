@@ -24,7 +24,7 @@ class RfidBackend(QObject):
         self.MIFAREReader = MFRC522.MFRC522()
         self.running = True # for threading
         self.rfid_thread = None  # Initialize the thread variable
-        self.continue_reading = True #for rfid - not used again
+        self.loop_reading = True #for rfid
         self.pause_read = False #for rfid - by default reading is not paused
 
     @pyqtSlot()
@@ -111,7 +111,7 @@ class RfidBackend(QObject):
     def read_rfid(self):
         print ('starting read function')
         # Scan for cards
-        while True:
+        while self.loop_reading:
             (status,TagType) = self.MIFAREReader.MFRC522_Request(self.MIFAREReader.PICC_REQIDL)
 
             # If a card is found
@@ -125,7 +125,6 @@ class RfidBackend(QObject):
             if status == self.MIFAREReader.MI_OK:
                 # Print UID
                 id = self.uid_to_num(uid)
-                self.id = id
                 self._rfid = str(id)
                 self.rfidAddressChanged.emit(str(self._rfid))
 
@@ -138,6 +137,7 @@ class RfidBackend(QObject):
                     print ("card detected")
                     #stop reading
                     self.pause_read = False #card has been scanned so current reading is not paused
+                    self.loop_reading = False #end looping to read card only once.
                 else:
                     print ("Authentication error")
 
@@ -156,6 +156,7 @@ class RfidBackend(QObject):
         else:
             print ('switchin on antenna and creating a read session')
             self.MIFAREReader.AntennaOn()
+            self.loop_reading = True #start looping to read card
             self.read_rfid()
 
 

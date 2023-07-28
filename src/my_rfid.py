@@ -137,7 +137,7 @@ class RfidBackend(QObject):
 
 
     def cancel_read_session(self):
-        self.MIFAREReader.MFRC522_StopCrypto1()
+        #self.MIFAREReader.MFRC522_StopCrypto1() #stops Anticoll from working
         #GPIO.cleanup()
         self.MIFAREReader.AntennaOff()
         print('cancel cancel')

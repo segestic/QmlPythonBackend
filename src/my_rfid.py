@@ -60,8 +60,10 @@ class RfidBackend(QObject):
     #custom function that should be in library, but created it
     def antennaStatus(self):
         temp = self.MIFAREReader.Read_MFRC522(self.TxControlReg)
-        if (~(temp & 0x03)):
-            print ("Antenna is off")
+        print ('Antenna status is ', temp)
+        state = (~(temp & 0x03))
+        if state:
+            print ("Antenna is off and state is ", state)
             return 0
         else:
             print ("Antenna is on")

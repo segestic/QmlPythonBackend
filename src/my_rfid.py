@@ -156,6 +156,11 @@ class RfidBackend(QObject):
 
 
     def resume_read_session(self):
+        temp = self.MIFAREReader.Read_MFRC522(self.TxControlReg)
+        state = (~(temp & 0x03))
+        print ('Antenna status is ', temp)
+        print ('Antenna state is ', state)
+
         if self.antennaStatus == 1:
             print ('Antenna is already on')
         else:

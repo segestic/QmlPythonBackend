@@ -57,15 +57,15 @@ class RfidBackend(QObject):
         continue_reading = False
         GPIO.cleanup()
 
-
+    #custom function that should be in library, but created it
     def antennaStatus(self):
         temp = self.MIFAREReader.Read_MFRC522(self.TxControlReg)
-        if temp & 0x03:
-            print ("Antenna is on")
-            return 1
-        else:
+        if (~(temp & 0x03)):
             print ("Antenna is off")
             return 0
+        else:
+            print ("Antenna is on")
+            return 1
 
     # Hook the SIGINT
     #signal.signal(signal.SIGINT, end_read)

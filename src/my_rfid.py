@@ -144,16 +144,18 @@ class RfidBackend(QObject):
 
     #switches off antenna alone....
     def pause_read_session(self):
-        self.pause_read = True
-        self.MIFAREReader.AntennaOff()
-        print('cancel cancel')
+        if not self.antennaStatus() == 0: #if the antenna is not off already -29.7.23
+            self.pause_read = True
+            self.MIFAREReader.AntennaOff()
+            print('cancel cancel')
 
 
     def resume_read_session(self):
         if self.pause_read == True:
-            print('Switching on antenna alone. A read session is on')
-            self.MIFAREReader.AntennaOn() #1
-            self.loop_reading = True #2
+            if not self.antennaStatus() == 1: #if the antenna is not on already -29.7.23
+                print('Switching on antenna alone. A read session is on')
+                self.MIFAREReader.AntennaOn() #1
+                self.loop_reading = True #2
         else:
             print ('switchin on antenna and creating a read session')
             self.MIFAREReader.AntennaOn() #1

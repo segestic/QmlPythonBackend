@@ -151,7 +151,7 @@ class RfidBackend(QObject):
 
     #switches off antenna alone....
     def pause_read_session(self):
-        if is_waiting_for_card: #not self.antennaStatus() == 0: #if the antenna is not off already -29.7.23
+        if self.is_waiting_for_card: #not self.antennaStatus() == 0: #if the antenna is not off already -29.7.23
             self.pause_read = True
             self.MIFAREReader.AntennaOff()
             print('cancel cancel')

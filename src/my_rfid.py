@@ -73,7 +73,7 @@ class RfidBackend(QObject):
             return 1
 
     def is_waiting_for_card(self):
-        status = self.READER.Read_MFRC522(self.READER.CommIrqReg)
+        status = self.MIFAREReader.Read_MFRC522(self.READER.CommIrqReg)
         zz = bool(status & 0x01)
         print ('Waiting for card status ', zz)
         return bool(status & 0x01)

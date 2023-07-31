@@ -24,7 +24,7 @@ class RfidBackend(QObject):
         self.MIFAREReader = MFRC522.MFRC522()
         self.running = True # for threading
         self.rfid_thread = None  # Initialize the thread variable
-        self.loop_reading = True #for rfid
+        self.loop_reading = False #for rfid
         self.pause_read = False #for rfid - by default reading is not paused
 
     @pyqtSlot()
@@ -164,10 +164,10 @@ class RfidBackend(QObject):
                 self.MIFAREReader.AntennaOn() #1
                 self.loop_reading = True #2
         else:
-            print ('switchin on antenna and creating a read session')
-            self.loop_reading = True #2 #start looping to read card
-            self.MIFAREReader.MFRC522_Init() #hard-reset
-            self.read_rfid() #read_rfid #3
+            if self.loop_reading == False
+                print ('switchin on antenna and creating a read session')
+                self.loop_reading = True #2 #start looping to read card
+                self.read_rfid() #read_rfid #3
 
 
                 

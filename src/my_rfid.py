@@ -35,8 +35,9 @@ class RfidBackend(QObject):
 
     @pyqtSlot()
     def stop_reading(self):
-        self.pause_read_session()
         self.running = False
+        self.rfid_thread = threading.Thread(target=self.pause_read_session)  # Create the thread
+        self.rfid_thread.start()
 
     #function not needed... depreceated
     @pyqtSlot()

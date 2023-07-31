@@ -164,13 +164,11 @@ class RfidBackend(QObject):
                 self.MIFAREReader.AntennaOn() #1
                 self.loop_reading = True #2
         else:
-            try:
-                print ('switchin on antenna and creating a read session')
-                self.loop_reading = True #2 #start looping to read card
-                self.read_rfid() #read_rfid #3
-            except Exception as e:
-                print("An error occurred: ", e)
-                self.loop_reading = True #2 #start looping to read card
+            print ('switchin on antenna and creating a read session')
+            self.loop_reading = True #2 #start looping to read card
+            self.MIFAREReader.MFRC522_Init() #hard-reset
+            self.read_rfid() #read_rfid #3
+
 
                 
 

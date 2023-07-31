@@ -151,7 +151,7 @@ class RfidBackend(QObject):
 
     #switches off antenna alone....
     def pause_read_session(self):
-        if self.is_waiting_for_card(): #not self.antennaStatus() == 0: #if the antenna is not off already -29.7.23
+        if self.is_waiting_for_card(): #if there is a current read session
             self.pause_read = True
             self.MIFAREReader.AntennaOff()
             print('cancel cancel')
@@ -159,13 +159,12 @@ class RfidBackend(QObject):
 
     def resume_read_session(self):
         if self.pause_read == True:
-            if not self.antennaStatus() == 1: #if the antenna is not on already -29.7.23
+            if self.is_waiting_for_card():
                 print('Switching on antenna alone. A read session is on')
                 self.MIFAREReader.AntennaOn() #1
                 self.loop_reading = True #2
         else:
             print ('switchin on antenna and creating a read session')
-            self.MIFAREReader.AntennaOn() #1
             self.loop_reading = True #2 #start looping to read card
             self.read_rfid() #read_rfid #3
 

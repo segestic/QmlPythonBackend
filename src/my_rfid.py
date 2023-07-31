@@ -72,6 +72,12 @@ class RfidBackend(QObject):
             print ("Antenna is on")
             return 1
 
+    def is_waiting_for_card(self):
+        status = self.READER.Read_MFRC522(self.READER.CommIrqReg)
+        zz = bool(status & 0x01)
+        print ('Waiting for card status ', zz)
+        return bool(status & 0x01)
+
 
     def read_id7(self):
         id = None
@@ -145,7 +151,7 @@ class RfidBackend(QObject):
 
     #switches off antenna alone....
     def pause_read_session(self):
-        if not self.antennaStatus() == 0: #if the antenna is not off already -29.7.23
+        if is_waiting_for_card: #not self.antennaStatus() == 0: #if the antenna is not off already -29.7.23
             self.pause_read = True
             self.MIFAREReader.AntennaOff()
             print('cancel cancel')

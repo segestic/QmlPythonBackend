@@ -20,6 +20,8 @@ class RfidBackend(QObject):
     
     def __init__(self):
         super().__init__()
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(17,GPIO.OUT)
         self._rfid = ""
         self.MIFAREReader = MFRC522.MFRC522()
         self.running = True # for threading
